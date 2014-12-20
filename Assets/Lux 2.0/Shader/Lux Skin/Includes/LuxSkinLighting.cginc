@@ -260,7 +260,9 @@ inline half4 LightingStandard (SurfaceOutputStandard s, half3 viewDir, UnityGI g
 
 //	Final composition
 	c.rgb = s.Albedo * (gi.indirect.diffuse + gi.light.color * lerp(dotNL.xxx, brdf, s.SSS) )	// diffuse
-			+ lightScattering																	// translucency
+			#if !defined(POINT) && !defined(SPOT)												// right now shadows of point and spot lights are just hard and corrupt deep sss
+				+ lightScattering
+			#endif																				// translucency
 			+ D * G * F * gi.light.color * dotNL * UNITY_PI										// direct specular
 			+ gi.indirect.specular * F_L; // * FresnelSchlickWithRoughness;						// indirect specular
 	
