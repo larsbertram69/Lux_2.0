@@ -6,30 +6,6 @@
 #include "UnityStandardUtils.cginc"
 
 //-------------------------------------------------------------------------------------
-// Default BRDF to use:
-
-#if (SHADER_TARGET < 30)
-	// Fallback to low fidelity one for pre-SM3.0
-	#define UNITY_BRDF_PBS BRDF3_Unity_PBS
-#elif defined(SHADER_API_MOBILE)
-	// Somewhat simplified for mobile
-	#define UNITY_BRDF_PBS BRDF2_Unity_PBS
-#else
-	// Full quality for SM3+ PC / consoles
-	#define UNITY_BRDF_PBS BRDF1_Unity_PBS
-#endif
-
-
-//-------------------------------------------------------------------------------------
-// BRDF for lights extracted from *indirect* directional lightmaps (baked and realtime).
-// Baked directional lightmap with *direct* light uses UNITY_BRDF_PBS.
-// For better quality change to BRDF1_Unity_PBS.
-// No directional lightmaps in SM2.0.
-
-#define UNITY_BRDF_PBS_LIGHTMAP_INDIRECT BRDF2_Unity_PBS
-#define UNITY_BRDF_GI BRDF_Unity_Indirect
-
-//-------------------------------------------------------------------------------------
 
 sampler2D _BRDFTex;
 
