@@ -254,9 +254,11 @@ inline half4 LightingStandard (SurfaceOutputStandard s, half3 viewDir, UnityGI g
 	half3 brdf = tex2D( _BRDFTex, brdfUV ).rgb;
 
 //	Translucency
-	half3 transLightDir = gi.light.dir + s.Normal * _Distortion;
-	float transDot = pow ( saturate(dot ( viewDir, -transLightDir ) ) * s.SSS, _Power ) * _Scale;
-	half3 lightScattering = transDot * _SubColor * gi.light.color;
+	#if !defined(POINT) && !defined(SPOT)	
+		half3 transLightDir = gi.light.dir + s.Normal * _Distortion;
+		float transDot = pow ( saturate(dot ( viewDir, -transLightDir ) ) * s.SSS, _Power ) * _Scale;
+		half3 lightScattering = transDot * _SubColor * gi.light.color;
+	#endif
 
 //	Final composition
 	c.rgb = s.Albedo * (gi.indirect.diffuse + gi.light.color * lerp(dotNL.xxx, brdf, s.SSS) )	// diffuse
