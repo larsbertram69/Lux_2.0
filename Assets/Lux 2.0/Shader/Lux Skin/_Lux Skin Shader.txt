@@ -1,0 +1,42 @@
+- - - - - - - - - - - - - - - -
+LUX SKIN SHADER
+
+The Lux skin shader is based on the work of Eric Penner (http://www.ericpenner.net/) and his pre-integrated skin shader.
+The base of the code Lux uses was ported to unity by farfarer (http://www.farfarer.com/blog/).
+Also the BRDF Lookup texture was provided by farfarer.
+I also added translucency as developed by Dice: http://dice.se/wp-content/uploads/Colin_BarreBrisebois_Programming_ApproximatingTranslucency.pdf
+The example model and textures are taken from: http://www.ten24.info/?p=1164
+
+- - - - - - - - - - - - - - - -
+IMPORTANT INFO
+As the skin shader uses its own lighting function it is forward only – no matter what lighting mode your camera is set to.
+So when using deferred rendering the shader might receive fog twice: First time right within the shader as it is forward only (which supports fog to be calculated within the shader) and then a second time in case you use the „Global Fog“ image effect (as the shader uses the opaque queue and writes to the z-buffer).
+In order to get around this you will have to enable the global shaderkeyword „_LUX_DEFERRED“ which prevents the shader from calculating fog itself (quite hacky right now – but it works) – or you can simply assign the „SetupLux_2_0“ script to your scene which will take care of this.
+ 
+
+- - - - - - - - - - - - - - - -
+THE SHADERINPUTS
+
+- Base(RGB) Alpha(A): Diffuse or albedo texture, alpha is unused.
+- Specular(R) Roughness(G) SSS(B) AO(A):
+  - Specular color as shade of gray in the red channel (skin does not color the spec highlight so a dark gray is ok: The original spec value of skin is 0.028).
+  - Smoothness in the green channel
+  - SSS determines the amount of surbsurface scattering in the blue channel: It may also be known as depth or thickness map: So apply bright values for areas like the ears, nose, and fingers which would usually have more subsurface scattering.
+  - AO ist stored in the alpha channel.
+- Normal Map: A normal map, but make sure that you only bake rather small details into it.
+- BRDF Lookup (RGB): Apply the lookup texture here that comes with the shader.
+- Curvature Scale: Lets you control the amount of small scale subsurface scattering. You should use rather small values here: 0.02 – 0.002. Please check your settings under varying lighting conditions!
+- Normal Map Blur Bias: Determines which mip level is used when calculating curvature and diffuse lighting. So higher values will give you softer direct and ambient diffuse lighting. Best to keep this between 1 and 2.
+
+- Subsurface Power: Power value for direct translucency or large scale subsurface scattering, view dependent: "While we usually want view-independent effect, this power is very useful because it will break the continuity in a view-dependent way, which will break uniformity between back and front lighting/translucency, and make your results much more organic." Quoted from dice's paper
+- Subsurface Distortion: Shifts the surface normals, view dependent, fresnel like: "This factor will simulate subsurface light transport distortion, improving the results and making everything even more organic, and almost Fresnel-like at times" Quoted from dice's paper
+- Subsurface Scale: Scales light transportation or translucency
+- Subsurface Color: Color of the light scattering through the surface
+
+- - - - - - - - - - - - - - - -
+BRDF Texture
+When importing the BRDF Texture you MUST set it's Wrap Mode to Clamp.
+Also ensure it bypasses sRGB sampling (you have to switch to "Advanced" to be able to check this option).
+
+Specular(R) Roughness(G) SSS(B) AO(A) Texture
+Make sure it bypasses sRGB sampling (you have to switch to "Advanced" to be able to check this option).
