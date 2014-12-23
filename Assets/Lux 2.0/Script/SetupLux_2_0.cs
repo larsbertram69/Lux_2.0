@@ -19,10 +19,8 @@ public class SetupLux_2_0 : MonoBehaviour {
 	}
 
 	void checkDeferred() {
-		Debug.Log("test");
 		if (Camera.main.renderingPath == RenderingPath.DeferredShading) {
 				Shader.EnableKeyword("_LUX_DEFERRED");
-				Debug.Log("deferred");
 		}
 		else {
 			Shader.DisableKeyword("_LUX_DEFERRED");	

@@ -99,8 +99,10 @@ Shader "Lux/Human/Skin" {
 				float deltaWorldPosition = length( fwidth ( IN.worldPos ) );
 			#endif		
 			o.Curvature = (deltaWorldNormal / deltaWorldPosition) * _CurvatureScale; // * combinedMap.b;
+
 		}
 		ENDCG
-	} 
+		
+	}
 	FallBack "Diffuse"
 }
