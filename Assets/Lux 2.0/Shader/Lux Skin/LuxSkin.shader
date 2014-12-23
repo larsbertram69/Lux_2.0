@@ -89,19 +89,15 @@ Shader "Lux/Human/Skin" {
 			blurredWorldNormal = WorldNormalVector( IN, blurredWorldNormal );
 			o.NormalBlur = blurredWorldNormal;
 		//	Get the scale of the derivatives of the blurred world normal and the world position.
-
-
-// Does not compile for PS4 - so we skip this for the moment
-
-//			#if SHADER_API_D3D11
+			#if (SHADER_TARGET > 40) //SHADER_API_D3D11
             // In DX11, ddx_fine should give nicer results.
-//            	float deltaWorldNormal = length( abs(ddx_fine(blurredWorldNormal)) + abs(ddy_fine(blurredWorldNormal)) );
-//            	float deltaWorldPosition = length( abs(ddx_fine(IN.worldPos)) + abs(ddy_fine(IN.worldPos)) );
-//            #else
+            	float deltaWorldNormal = length( abs(ddx_fine(blurredWorldNormal)) + abs(ddy_fine(blurredWorldNormal)) );
+            	float deltaWorldPosition = length( abs(ddx_fine(IN.worldPos)) + abs(ddy_fine(IN.worldPos)) );
+            #else
 				//float deltaWorldNormal = length( fwidth( blurredWorldNormal ) );
 				float deltaWorldNormal = length( fwidth( blurredWorldNormal ) );
 				float deltaWorldPosition = length( fwidth ( IN.worldPos ) );
-//			#endif		
+			#endif		
 			o.Curvature = (deltaWorldNormal / deltaWorldPosition) * _CurvatureScale; // * combinedMap.b;
 
 		}
