@@ -1,0 +1,71 @@
+- - - - - - - - - - - - - - - -
+LUX HAIR SHADER
+
+The Lux hair shader(s) will give you anisotropic highlights, smoothed diffuse and rim lighting – but request some special inputs.
+
+- - - - - - - - - - - - - - - -
+TEXTURING, UVS AND TANGENTS
+
+First and most important is the fact that all hair strands should always follow the tangents of your model which means that in texture space hair should be vertically aligned. So please make sure that you always paint your hair from top to down or vice versa. In case you paint it from left to right make sure that you adjust the „Anisotropic Direction“.
+
+All other inputs might be quite familiar to you.
+We do not need any fancy specular map here as everything is controlled by colorpickers(!).
+Smoothness is controlled by the red color channel of the combined specular texture map multiplied by the value from the sliders.
+
+If you want to know more about hair rendering please have a look here:
+http://help.chaosgroup.com/vray/help/200R1/vrayhairmtl_params.htm
+The basiscs of this shader are explained here:
+http://amd-dev.wpengine.netdna-cdn.com/wordpress/media/2012/10/Scheuermann_HairRendering.pdf
+
+So lets get to the inputs.
+
+- - - - - - - - - - - - - - - -
+INPUTS
+
+- Diffuse (RGB) Alpha (A): RGB store the base diffuse color information whereas Alpha stores the transparency.
+- Cutoff:
+  — When using the alpha testing shader: Controls alpha cut as you might be familiar with.
+  — When using the alpha blending shader: Should be set to rather high values like 0.9 so fully opaque pixels are skipped in the fragment shader very early.
+- Combined specular texture:
+  - Specular Shift (R): Lets you shift specular highlights per pixel.
+  - Smoothness (G): Lets add you add per pixel Smoothness.
+  Please keep in mind that the values will be multiplied with the values from the Smoothness sliders below. So you should keep this channel rather bright.
+  - Noise (B): Noise that gets applied to the 2nd specular highlight simulating things like cracks in the strands.
+- Normalmap: Just a regular normal map but please make sure that it is not too bumpy.
+- Anisotropic Direction (XYZ): Determines the direction of the hair strands in texture space. If they are aligned along the y-axis (V) it should be 0,1,0. If they are aligned horizontally it would be 1,0,0. The W-component is unused.
+
+As the shader supports 2 specular highlights (one from the outer surface of the strand, one from the inner one) you will find 2 "groups" of inputs:
+
+- Primary Specular Color: Sets primary spec color and should be a dark gray.
+- Primary Spec Shift: Sets primary specular shift and determines how far the first specular highlight will be offsetted.
+- Primary Smoothness: Sets primary specular smoothness.
+
+- Secondary Specular Color: Sets secondary spec color.
+- Secondary Spec Shift: Sets secondary specular shift and determines how far the second specular highlight will be offsetted.
+- Secondary Smoothness: Sets secondary specular smoothness.
+
+- Rim Light Strength: Set strength of Rim Lighting. As it is part of the direct Lighting function rim lighting fully reacts to real time shadows and light attenuation. It uses a fixed power of 3.
+
+
+- - - - - - - - - - - - - - - -
+GEOMETRY
+
+- The shader uses "correct" backface culling. So it is up to you to double and flip faces where needed.
+- Ambient Occlusion can be baked to vertex color red: red = 0 = occluded and red = 1 = not occluded.
+
+
+- - - - - - - - - - - - - - - -
+TECHNICAL NOTES
+
+- The shader always renders using forward even if your camera is set to "deferred“. So when using deferred rendering the shader using alpha testing might receive fog twice: First time right within the shader as it is forward only (which supports fog to be calculated within the shader) and then a second time in case you use the „Global Fog“ image effect (as the shader uses the „AlphaTest“ queue and writes to the z-buffer).
+In order to get around this you will have to enable the global shaderkeyword „_LUX_DEFERRED“ which prevents the shader from calculating fog itself (quite hacky right now – but it works) – or you can simply assign the „SetupLux_2_0“ script to your scene which will take care of this.
+
+
+- - - - - - - - - - - - - - - -
+SPECIAL HINTS
+
+- Make sure that ALL textures are assigned – especially the „Combined specular texture“. In case you do not have any you may use the „Base_shift_roughness_noise“ texture.
+- Please note: Primary and secondary specular highlights will be added on top of each other.
+So these might tend to be too bright if you do not choose your input values carefully.
+- Super important when using the alpha blended hair on top of alpha tested:
+Make sure that the materials have the same values! Tip: Set up you material only using the alpha tested shader, then duplicate the material, chnge the shader on the new material and adjust the _Cutoff value.
