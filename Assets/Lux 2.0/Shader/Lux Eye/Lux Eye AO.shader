@@ -10,7 +10,14 @@
 		Offset -1,-1
 		
 		CGPROGRAM
-		#pragma surface surf Lambert noambient alpha decal:blend 
+		#pragma surface surf Lambert noambient alpha decal:blend
+		#pragma shader_feature _LUX_DEFERRED
+
+	//	Prevent shader from rendering fog (needed when used with deferred rendering and global fog)
+		#ifdef _LUX_DEFERRED
+			#undef UNITY_APPLY_FOG
+			#define UNITY_APPLY_FOG(coord,col) /**/
+		#endif
 
 		fixed4 _Color;
 		sampler2D _MainTex;

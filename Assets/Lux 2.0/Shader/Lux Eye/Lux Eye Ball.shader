@@ -55,7 +55,7 @@
 			o.Alpha = 1;
 			fixed4 spec_albedo = tex2D(_SpecTex, UVs + offset);
 		//	Normal map
-			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex - offset));
+			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_MainTex)); // - offset));
 		//	Specular Color
 			o.Specular = spec_albedo.rgb;
 		//	Smoothness
