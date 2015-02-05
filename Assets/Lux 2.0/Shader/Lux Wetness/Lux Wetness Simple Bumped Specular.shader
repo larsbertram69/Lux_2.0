@@ -2,7 +2,7 @@
 	Properties {
 		[LM_MasterTilingOffset] [LM_Albedo] _MainTex ("Base (RGB)", 2D) = "white" {}
 		[LM_NormalMap] _BumpMap ("Normalmap", 2D) = "bump" {}
-		[LM_Specular] [LM_Glossiness] _SpecTex ("Specular Color (RGB) Roughness (A)", 2D) = "black" {}
+		[LM_Specular] [LM_Glossiness] _SpecTex ("Specular Color (RGB) Smoothness (A)", 2D) = "black" {}
 
 		// Special Properties needed by all wetness shaders
 		_WetnessWorldNormalDamp ("Wetness WorldNormal Damp", Range(0,1)) = 0.5

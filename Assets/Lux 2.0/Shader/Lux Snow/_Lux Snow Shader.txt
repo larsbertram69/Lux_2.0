@@ -1,0 +1,96 @@
+- - - - - - - - - - - - - - - -
+TABLE OF CONTENT
+
+- Lux Snow Shader – Introduction
+- Lux Global Snow Parameters
+- Lux Mesh/Material/Shader specific Snow Parameters
+- - Snow Accumulation
+- Texture Import Settings
+
+
+- - - - - - - - - - - - - - - -
+LUX SNOW SHADERS - INTRODUCTION
+
+The Lux snow shader lets you add dynamic snow to your materials.
+It uses the built in physically based lighting functions and should support all kind of different lighting situations.
+
+Adding dynamic snow to your materials basically means:
+- The albedo will be tweaked towards the overall snow albedo texture according to the accumulated amount of snow.
+- The specular reflectance will be adjusted to match those of snow.
+- The smoothness will be adjusted to match those of snow.
+- The normal will be tweaked toward the globally defined snow normal.
+- Special effects like wetness will be added according to the overall defined melt parameter.
+
+
+- - - - - - - - - -
+Lux Global Snow Parameters
+
+All general snow parameters are controlled by the „SetupLux“ script.
+
+If you have a look at the „SetupLux“ script you will find a bunch of snow related params which are:
+- Lux_Wind Direction
+- Lux_Snow Albedo Smoothness Tex
+- Lux_Snow Normal Tex
+- Lux_Snow Amount
+- Lux Snow Micro Erosion
+- Lux_Snow Wind Erosion
+- Lux_Snow Melt
+- Lux_Snow Icyness
+- Lux_Snow Sub Color
+
+Please have a look at the „_Setup_Lux Script.rtf“ to find out more about these.
+
+
+- - - - - - - - - -
+Lux Mesh/Material/Shader specific Snow Parameters
+
+As snow is more or less a global phenomenon we have to probably control it at a pretty large scale:
+Thus most inputs are set globally using the „SetupLux“ script.
+
+Nevertheless there are some parameters that are defined per material and should fit your textures and models.
+Most easily to understand is probably
+- Snow Size:
+This will let you scale the globally defined snow textures to match your geometry: The smaller the object the smaller this parameter might be – as the globally defined snow texture picks ups the model’s uvs.
+
+- AO (G), Smoothness (B), Height (A) texture:
+Smoothness defines the regular smoothness of the material.
+Height defines the height and is taken into account for the parallax extrusion. But height also influences snow accumulation as soon as you tweak the „Lux_Snow Wind Erosion“ slider in the „SetupLux“ script towards 1.0.
+„AO“ in this case does not define ambient occlusion but is taken into account to calculate the snow accumulation as long as the „Lux_Snow Wind Erosion“ slider in the „SetupLux“ script is set to near to 0.0.
+
+So lets have a look into snow accumulation.
+
+- - - - - - - - - -
+Snow Accumulation
+
+Snow Accumulation is mainly controlled by the metarial’s height and ambient occlusion masks as well as the alpha channel of the global snow texture.
+Latter contains a bunch of dots in different shades a gray of which more and more contribute to the calculated snowdistrubution mask the higher the snow amount is.
+Please have a look at the texture that ships with the package to get a basic idea. You may also try/test the „Snow_TestAccumulation“ texture from the package to get this a bit more clearly.
+
+The ambient occlusion mask and heightmap contribute asd described below:
+
+„Lux_Snow Wind Erosion“ = 0.0:
+Snow will accumulate on the most exposed parts of the surfaces (defined by the inverse version of ambient occlusion map).
+„Lux_Snow Wind Erosion“ = 1.0:
+Snow starts to accumulate on the lower (defined by the hightmap) and less exposed (defined by the ambient occlusion map) parts of the surface.
+
+In order to make different materials fit as far as the accumulation of snow is concerned both the influence of the ao and the height map can be tweaked using the:
+- AO Map Influence
+- Height Map Influence
+parameters.
+
+Next to this snow accumulation is always influenced by the relation between the pixel’s normal in world space and the Lux_Wind vector.
+For this reason the base Lux snow shader does not fit the needs of dynamic objects as snow (accumulation) would just shift according to the object’s orientation. In case you want to use dynamic snow with dynamic objects you will have to tweak the shader – e.g.: by simply skipping „Lux_Wind Direction“ and giving it a fixed direction (e.g.: world space "up" or even local space "up"). If it comes to skinned mesh renderes it even might be more difficult: All i can think of right now are vertex colors: So you would accumulate snow on the shoulders or the hat of a character – completely independently from the pixel’s world normal vector.
+
+In order to find out how to make a smooth snow cycle please have a look at the „SnowAnimation“ clip provided with the package.
+
+- Parallax Extrusion:
+Defines amount of parallax extrusion based on the heightmap.
+
+
+- - - - - - - - - -
+Texture Import Settings
+
+Please keep in mind that the combined "AO (G), Smoothness (B), Height (A) texture" map is neither a regular color nor a normal map.
+So make sure that you check "Bypass SRGB Sampling" in the "Import settings" --> "Advanced" – especially if you use linear color space.
+
+

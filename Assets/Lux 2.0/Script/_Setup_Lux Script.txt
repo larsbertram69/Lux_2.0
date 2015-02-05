@@ -1,0 +1,98 @@
+- - - - - - - - - - - - - - - -
+LUX SETUP 2.0 SCRIPT
+
+The Lux setup script takes care of most environmental effects like rain or snow and adjusts fog settings of those lux shaders which are forward only so – in case you use those in deferred rendering – they will not receive fog twice. 
+
+- - - - - - - - - -
+Lux setup Script Parameters
+
+WIND
+
+- Lux_Wind Direction:
+Set this Vector3 by rotating the GameObject that holds the setup script.
+It controls e.g. the direction in which rain ripples move or on which faces dynamic snow accumulates.
+
+- Lux_Wind Strength:
+Wind Strength – currently not used.
+
+
+SUN
+
+- Lux Sun:
+Currently not used.
+
+
+RAIN
+
+- Lux_Water Floodlevel:
+It is a vector4 parameter but only X and Y are used.
+X controls the amount of water that is accumulated in small cracks and on flat surfaces – according to the heightmap assigned to the material.
+Y controls the amount of water that is accumulated in puddles.
+Puddles generally are defined by adding vertex colors to your mesh: vertex.color.g = 0 means: let us have a puddle here where vertex.color.g = 1 means: no puddle at all.
+But why do we have water accumulated separately in cracks and on the flat surface from water accumulated in puddles? Well, if it starts to rain water will first be accumulated in cracks, then it will flood the surface. Finally puddles will start to accumulate water. Whereas in case it stops raining and starts to dry first the thin layer of water on the whole surface and in the small cracks will dry, then the water in the puddles. The „SetupLux“ script does not handle this for you but let you control both values separately.
+
+- Lux_Rain Intensity:
+Even if it is not raining there might be wetness. But in case it is raining you might want to have rain drops added to your surfaces.
+
+- Lux Rain Ripples:
+This slot is reserved to the predefined rain ripple texture which is needed to add ripples to the surfaces: Please find "Animated_WaterDrops" and add it to this slot!
+
+- Lux_Ripple Wind Speed:
+Static rain ripples might just look a bit boring. So you can add some wind to them making them move into a specified direction.
+The direction of the movement is controlled by the _Lux_WindDirection. The speed of the first ripple sample is controlled by the X component, the speed of the second ripple sample is controlled by the Y component.
+
+- Lux_Ripple Tiling:
+This parameter defines the size of the ripple texture. Please note that the ripple texture is always projected in world space which ensures that ripples on all materials will have the same size. As it is a top down projection ripples might get distorted on steep slopes – but they should not be rendered on those slopes anyway...
+
+- Lux_Ripple Anim Speed:
+This param defines the speed of how the ripples "spread". Weak rain might have a slower ripple anim speed whereas heavy rain might have a faster one.
+
+- Lux_WaterBump Distance:
+As adding ripples and/or water flow is pretty expensive to render for it causes some more texture fetches you may want to fade out them over distance to the camera. This does not only speed up rendering but also smoothes the rendered image over distance!
+
+
+SNOW
+
+- Lux_Snow Albedo Smoothness Tex:
+Texture which globally defines the snow’s albedo (rgb) and smoothness (a). The alpha channel is also used to calculate the snow accumulation. So it should contain a bunch of dots in different shades a gray. Please have a look at the texture that ships with the package to get a basic idea. You may also try/test the „Snow_TestAccumulation“ texture from the package to get this a bit more clearly.
+
+- Lux_Snow Normal Tex:
+Normal texture or bump map which gets applied globally to those parts of the surfaces which are covered by snow.
+
+- Lux_Snow GI Master Gameobject:
+As the dynamic accumulation of snow will change the surfaces’ albedo and most likely influence the amount of reflected light global illumination should be updated accordingly.
+So here you can assign a GameObject whose renderer/material will update the dynamic GI.
+If you have several GI systems which are effected by snow you might have to add several Gameobjects: One for each system.
+You will have to edit the script to do so.
+To check if GI is updated correctly please go to the "Scene View", switch to "Global Illumination" -> "Albedo", then change the "Lux_Snow Amount": All surfaces which are effected by snow should change their color to white if the "Lux_Snow Amount" is set to 1.0.
+
+- Lux_Snow Start Height:
+Defines the world space Y coord from which snow starts: So if vertice.y >= Lux_Snow Start Height = add snow.
+
+- Lux_Snow Height Blending:
+Defines the height based blending zone for snow. Please start with very, very low values here (e.g. 0.01) unless your snow start height is pretty high!
+
+- Lux_Snow Amount:
+Defines the overall amount of accumulated snow (or water/wetness if Lux_Snow Melt is > 0.0)
+
+- Lux Snow Micro Erosion:
+If set to 0.0 snow will be accumulated taking the alpha channel of the snow texture into account which lets you create snow that „more or less“ accumulates as single flakes.
+If set to 1.0 the alpha channel of the snow texture is not taken into account.
+
+- Lux_Snow Wind Erosion:
+If set to 0.0 snow will accumulate on the most exposed parts of the surfaces (defined by the inverse version of ambient occlusion map).
+If set to 1.0 snow starts to accumulate on the lower (defined by the heightmap) and less exposed (defined by the inverse version of ambient occlusion map) parts of the surface.
+
+- Lux_Snow Melt:
+Lets you melt accumulated snow so that the surface becomes wet.
+In order to finally dry the surface you will also have to lower the Lux_Snow Amount.
+
+- Lux_Snow Icyness:
+Defines the strength of the effect of the alpha channel of the snow texture on the calculated smoothness.
+If set to 0.0 you will not get any snow crystals reflecting light.
+If set to 1.0 you will get the „full“ effect from the alpha channel of the snow texture.
+Please note: As the alpha channel of the snow texture is also used to calculate the snow accumulation smoothness is hard coded to: saturate(0.65 - SnowFlakeMask).
+
+- Lux_Snow Sub Color:
+Currently not used.
+

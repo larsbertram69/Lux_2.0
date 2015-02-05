@@ -2,11 +2,11 @@
 	Properties {
 		[LM_MasterTilingOffset] [LM_Albedo] _MainTex ("Base (RGB)", 2D) = "white" {}
 		[LM_NormalMap] _BumpMap ("Normalmap", 2D) = "bump" {}
-		[LM_Specular] [LM_Glossiness] _SpecTex ("Specular Color (RGB) Roughness (A)", 2D) = "black" {}
+		[LM_Specular] [LM_Glossiness] _SpecTex ("Specular Color (RGB) Smoothness (A)", 2D) = "black" {}
 
 		// Special Properties needed by Heightmap based wetness shaders
 		_HeightWetness("Heightmap(A) Puddle Noise(R)", 2D) = "white" {}
-    	_Parallax ("Height", Range (0.005, 0.08)) = 0.02
+    	_Parallax ("Parallax Extrusion", Range (0.005, 0.08)) = 0.02
 
     	// Special Properties needed by wetness shaders using tex2Dlod
     	_TextureSize ("Texture Size", Float) = 1024
