@@ -42,7 +42,7 @@ public class SetupLux_2_0 : MonoBehaviour {
 	public float Lux_SnowMicroErosion = 0.0f;
 	[Range(0.0f,1.0f)]
 	public float Lux_SnowWindErosion = 0.0f;
-	[Range(0.0f,1.0f)]
+	[Range(0.0f,0.99f)]
 	public float Lux_SnowMelt = 0.0f;
 	[Range(0.0f,1.0f)]
 	public float Lux_SnowIcyness = 0.5f;
@@ -113,6 +113,7 @@ public class SetupLux_2_0 : MonoBehaviour {
 		// WIP: We have to tweak Lux_SnowAmount according to Lux_SnowWindErosion
 		Lux_adjustedSnowAmount = Mathf.Lerp(Lux_SnowAmount, Mathf.Clamp(Lux_SnowAmount * 1.1f, 0, 1), Lux_SnowWindErosion);
 		Lux_adjustedSnowAmount = Mathf.Lerp(Lux_adjustedSnowAmount, Lux_adjustedSnowAmount * 0.9f, Lux_SnowMicroErosion);
+		// TODO: Melting * Winderosion should effect SnowAmount 
 		Lux_adjustedSnowAmount -= Lux_adjustedSnowAmount * Lux_SnowMelt;
 		Shader.SetGlobalFloat("_Lux_SnowAmount", Lux_adjustedSnowAmount);
 		Shader.SetGlobalVector("_Lux_SnowMelt", new Vector4 (
